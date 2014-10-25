@@ -1,0 +1,76 @@
+Explanation:
+  The MySQL configure script removes -Wall.
+  -Wall implies -Wformat.
+  If a user has, for example, -Wall and -Wformat-y2k set, but not -Wformat, this
+  will work properly for her. But no longer when the configure script has
+  removed -Wall. gcc (at least version 4.3.1) will issue a warning, because
+  -Wformat-y2k will be ineffective without -Wformat (or -Wall, of course). This
+  warning will be treated as an error, because the MySQL configure script adds
+  -Werror. And all this results in wrong decisions made by the configure script.
+  We can not simply add -Wformat, or replace -Wall with -Wformat, because this
+  parameter may not be available. So we have to filter out all flags, which need
+  -Wformat in order to work. (Or we could, of course, add some more
+  sophisticated code lines.)
+  -Wformat=0 causes breakage, too, of course.
+
+
+diff -ur mysql.orig/config/ac-macros/misc.m4 mysql/config/ac-macros/misc.m4
+--- mysql.orig/config/ac-macros/misc.m4	2007-12-14 20:43:25.000000000 +0000
++++ mysql/config/ac-macros/misc.m4	2008-06-22 20:09:29.000000000 +0000
+@@ -38,7 +38,7 @@
+ if test "$ac_cv_prog_gxx" = "yes"
+ then
+   # Add -Werror, remove -fbranch-probabilities (Bug #268)
+-  CXXFLAGS=`echo "$CXXFLAGS -Werror" | sed -e 's/-fbranch-probabilities//; s/-Wall//; s/-Wcheck//'`
++  CXXFLAGS=`echo "$CXXFLAGS -Werror" | sed -e 's/-fbranch-probabilities//; s/-Wall//; s/-Wformat-y2k//; s/-Wformat-extra-args//; s/-Wformat-nonliteral//; s/-Wformat-security//; s/-Wcheck//'`
+ fi
+ mysql_cv_btype_last_arg_accept=none
+ [AC_TRY_COMPILE([#if defined(inline)
+@@ -98,7 +98,7 @@
+ if test "$ac_cv_prog_gxx" = "yes"
+ then
+   # Add -Werror, remove -fbranch-probabilities (Bug #268)
+-  CXXFLAGS=`echo "$CXXFLAGS -Werror" | sed -e 's/-fbranch-probabilities//; s/-Wall//; s/-Wcheck//'`
++  CXXFLAGS=`echo "$CXXFLAGS -Werror" | sed -e 's/-fbranch-probabilities//; s/-Wall//; s/-Wformat-y2k//; s/-Wformat-extra-args//; s/-Wformat-nonliteral//; s/-Wformat-security//; s/-Wcheck//'`
+ fi
+ mysql_cv_btype_struct_rlimit=none
+ [AC_TRY_COMPILE([#if defined(inline)
+diff -ur mysql.orig/configure.in mysql/configure.in
+--- mysql.orig/configure.in	2008-06-22 19:59:12.000000000 +0000
++++ mysql/configure.in	2008-06-22 20:09:37.000000000 +0000
+@@ -258,7 +258,7 @@
+ # NM= "$NM -X64"
+ #archive_expsym_cmds= `echo "$archive_expsym_cmds" | sed -e '/"$(CC)"//'`
+ #archive_expsym_cmds= "$CC -q64 $archive_expsym_cmds"
+-#  CXXFLAGS=`echo "$CXXFLAGS -Werror" | sed -e 's/-fbranch-probabilities//; s/-Wall//; s/-ansi//; s/-pedantic//; s/-Wcheck//'`
++#  CXXFLAGS=`echo "$CXXFLAGS -Werror" | sed -e 's/-fbranch-probabilities//; s/-Wall//; s/-Wformat-y2k//; s/-Wformat-extra-args//; s/-Wformat-nonliteral//; s/-Wformat-security//; s/-ansi//; s/-pedantic//; s/-Wcheck//'`
+ 
+ #AC_LIBTOOL_DLOPEN AC_LIBTOOL_WIN32_DLL AC_DISABLE_FAST_INSTALL AC_DISABLE_SHARED AC_DISABLE_STATIC
+ 
+@@ -2073,7 +2073,7 @@
+ 
+ if test "$ac_cv_prog_gxx" = "yes" -a "$with_other_libc" = "no"
+ then
+-  CXXFLAGS=`echo "$CXXFLAGS -Werror" | sed -e 's/-fbranch-probabilities//; s/-Wall//; s/-ansi//; s/-pedantic//; s/-Wcheck//'`
++  CXXFLAGS=`echo "$CXXFLAGS -Werror" | sed -e 's/-fbranch-probabilities//; s/-Wall//; s/-Wformat-y2k//; s/-Wformat-extra-args//; s/-Wformat-nonliteral//; s/-Wformat-security//; s/-ansi//; s/-pedantic//; s/-Wcheck//'`
+ fi
+ 
+ AC_TRY_COMPILE(
+@@ -2108,7 +2108,7 @@
+ AC_LANG_CPLUSPLUS
+ if test "$ac_cv_prog_gxx" = "yes" -a "$with_other_libc" = "no"
+ then
+-  CXXFLAGS=`echo "$CXXFLAGS -Werror" | sed -e 's/-fbranch-probabilities//; s/-Wall//; s/-ansi//; s/-pedantic//; s/-Wcheck//'`
++  CXXFLAGS=`echo "$CXXFLAGS -Werror" | sed -e 's/-fbranch-probabilities//; s/-Wall//; s/-Wformat-y2k//; s/-Wformat-extra-args//; s/-Wformat-nonliteral//; s/-Wformat-security//; s/-ansi//; s/-pedantic//; s/-Wcheck//'`
+ fi
+ AC_TRY_COMPILE(
+ [#undef inline
+@@ -2141,7 +2141,7 @@
+ AC_LANG_CPLUSPLUS
+ if test "$ac_cv_prog_gxx" = "yes" -a "$with_other_libc" = "no"
+ then
+-  CXXFLAGS=`echo "$CXXFLAGS -Werror" | sed -e 's/-fbranch-probabilities//; s/-Wall//; s/-ansi//; s/-pedantic//; s/-Wcheck//'`
++  CXXFLAGS=`echo "$CXXFLAGS -Werror" | sed -e 's/-fbranch-probabilities//; s/-Wall//; s/-Wformat-y2k//; s/-Wformat-extra-args//; s/-Wformat-nonliteral//; s/-Wformat-security//; s/-ansi//; s/-pedantic//; s/-Wcheck//'`
+ fi
+ AC_TRY_COMPILE(
+ [#undef inline

@@ -1,0 +1,12 @@
+diff -ur a/src/htmlparser/generate_fsm.py b/src/htmlparser/generate_fsm.py
+--- a/src/htmlparser/generate_fsm.py	2014-05-20 17:34:16.000000000 +0200
++++ b/src/htmlparser/generate_fsm.py	2014-05-20 17:35:47.726218803 +0200
+@@ -311,7 +311,7 @@
+                      self._CreateStatesEnum(),
+                      self._CreateStatesExternal(),
+                      self._CreateStatesInternalNames(),
+-                     self._CreateTransitionTable())))
++                     self._CreateTransitionTable())).encode('utf-8'))
+ 
+ 
+ def main():

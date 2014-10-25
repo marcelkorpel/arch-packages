@@ -1,0 +1,21 @@
+diff --git a/driver/nativeapi/libmysql_static_proxy.cpp b/driver/nativeapi/libmysql_static_proxy.cpp
+index 68b1ee9..639186d 100644
+--- a/driver/nativeapi/libmysql_static_proxy.cpp
++++ b/driver/nativeapi/libmysql_static_proxy.cpp
+@@ -293,6 +293,8 @@ LibmysqlStaticProxy::options(MYSQL * mysql, enum mysql_option option, const void
+ int
+ LibmysqlStaticProxy::options(MYSQL * mysql, enum mysql_option option, const void *arg1, const void *arg2)
+ {
++/* mysql_options4() has been added in MySQL >= 5.6.6, but is missing in MariaDB */
++#ifndef MARIADB_BASE_VERSION
+ #if MYSQL_VERSION_ID >= 50606	
+ 	if ((::mysql_options4(mysql, option, static_cast<const char *>(arg1), static_cast<const char *>(arg2)))) {
+ 		throw sql::InvalidArgumentException("Unsupported option provided to mysql_options4()");
+@@ -302,6 +304,7 @@ LibmysqlStaticProxy::options(MYSQL * mysql, enum mysql_option option, const void
+ #else
+ 	throw ::sql::MethodNotImplementedException("::mysql_options4()");
+ #endif
++#endif
+ }
+ /* }}} */
+ 

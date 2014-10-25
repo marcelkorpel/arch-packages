@@ -1,0 +1,32 @@
+# Maintainer: Marcel Korpel <marcel[dot]korpel[at]gmail>
+# Contributor: Ilya Kuznetsov <monochrome.r42@gmail.com>
+# Contributor: Christian Hesse <mail@eworm.de>
+
+pkgname=mysql-connector-c++
+pkgver=1.1.4
+pkgrel=1
+pkgdesc="A MySQL database connector for C++"
+arch=('i686' 'x86_64')
+url="http://dev.mysql.com/doc/connector-cpp/en/"
+license=('GPL')
+depends=('libmysqlclient' 'boost-libs')
+makedepends=('cmake' 'boost')
+source=("http://cdn.mysql.com/Downloads/Connector-C++/${pkgname}-${pkgver}.tar.gz"{,.asc})
+sha256sums=('a25f14dad39e93a2f9cdf09166ee53981f7212dce829e4208e07a522963a8585'
+            'SKIP')
+
+build() {
+  cd "${srcdir}"/${pkgname}-${pkgver}
+  cmake . -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DMYSQLCPPCONN_BUILD_EXAMPLES=OFF \
+    -DMYSQL_LIB=/usr/lib/libmysqlclient.so
+  make
+}
+
+package() {
+  cd "${srcdir}"/${pkgname}-${pkgver}
+  make DESTDIR="${pkgdir}" install
+
+  rm "${pkgdir}"/usr/{ANNOUNCEMENT,COPYING,README,INSTALL,Licenses_for_Third-Party_Components.txt}
+}

@@ -1,0 +1,12 @@
+*/pkg/*
+*/src/*
+*.tgz
+*.tar.gz
+*.tar.gz.asc
+*.tar.xz
+*.tar.bz2
+*.jar
+*.zip
+*.exe
+*.msi
+*.log

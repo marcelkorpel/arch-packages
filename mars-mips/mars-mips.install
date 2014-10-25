@@ -1,0 +1,8 @@
+post_install() {
+  [[ $(type -p gtk-update-icon-cache) ]] && usr/bin/gtk-update-icon-cache -qtf usr/share/icons/hicolor
+  [[ $(type -p update-desktop-database) ]] && usr/bin/update-desktop-database -q usr/share/applications
+}
+
+post_remove() {
+  post_install $1
+}

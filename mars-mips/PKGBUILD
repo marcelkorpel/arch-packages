@@ -1,0 +1,31 @@
+# Maintainer: M0Rf30
+
+pkgname=mars-mips
+pkgver=4.4
+_date=Aug2013
+_pkgver=${pkgver/./_}
+pkgrel=3
+pkgdesc="An IDE for programming in MIPS assembly language intended for educational-level use"
+arch=('any')
+url="http://courses.missouristate.edu/KenVollmar/MARS/index.htm"
+license=('MIT')
+depends=('java-runtime')
+install=${pkgname}.install
+source=(http://courses.missouristate.edu/KenVollmar/MARS/MARS_${_pkgver}_${_date}/Mars${_pkgver}.jar
+        mars-mips.sh
+        mars.png
+        mars.desktop)
+sha256sums=('b1536bbe41fe5b71d2b5790dadc6d9fe01b234970d4ec35a5b48085c95ef8502'
+            '6165c0aa51c09bd66d54ae8cb0cce7b7c25e4e3559fb0afc2e2c9294ae4f003a'
+            '094749e1f0e1f0660f90ab86163653ba9d3dc4120c0799c6b0700c5f1704e363'
+            '4eaf74f02b99a7551b68db92168302864b13514d92982f5e487da99612ef461b')
+
+package() {
+  cd "$srcdir"
+
+  install -Dm644 Mars${_pkgver}.jar "$pkgdir/usr/share/java/$pkgname/Mars.jar"
+  install -Dm755 mars-mips.sh "$pkgdir/usr/bin/mars-mips"
+  install -Dm644 mars.png "$pkgdir/usr/share/icons/hicolor/48x48/apps/mars.png"
+  install -Dm644 mars.desktop "$pkgdir/usr/share/applications/mars.desktop"
+  install -Dm644 MARSlicense.txt "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

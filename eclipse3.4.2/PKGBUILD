@@ -1,0 +1,51 @@
+# $Id$
+# Contributor: Andrew Wright <andreww@photism.org>
+# Contributor: Andreas W. Hauser <andy-aur@splashground.de>
+# Maintainer: Paul Mattal <paul@archlinux.org>
+
+pkgname=eclipse
+pkgver=3.4.2
+pkgrel=4
+_date=200902111700
+pkgdesc="An IDE for Java and other languages"
+arch=('i686' 'x86_64')
+url="http://eclipse.org"
+depends=('java-environment>=6' 'gtk2>=2.16.1' 'unzip' 'xulrunner>=1.9.0.10')
+install=eclipse.install
+makedepends=('zip')
+license=("EPL/1.1")
+source=(http://archive.eclipse.org/eclipse/downloads/drops/R-${pkgver}-${_date}/eclipse-SDK-${pkgver}-linux-gtk.tar.gz
+        eclipse.sh
+        eclipse.desktop
+        eclipse.ini.patch)
+md5sums=('a131aa4fc6c858be4fc17f6d4bdb7089'
+         '3c67eade5888ea88813e787b586b4f1f'
+         'd88490571b49c8ebb221ed349815d040'
+         'ee66a334bc443fd23ad9bc080dc6ea69')
+if [ "$CARCH" = "x86_64" ]; then
+  source[0]="http://archive.eclipse.org/eclipse/downloads/drops/R-${pkgver}-${_date}/eclipse-SDK-${pkgver}-linux-gtk-${CARCH}.tar.gz"
+  md5sums[0]='a9b5451901acee28f935852b1cbc9278'
+fi
+
+package() {
+  cd "${srcdir}/$pkgname"
+
+  # patch to increase default memory limits
+  patch -Np0 -i "${srcdir}/eclipse.ini.patch"
+
+  # install eclipse
+  install -dm755 "${pkgdir}/usr/share"
+  mv "${srcdir}/eclipse" "${pkgdir}/usr/share/"
+
+  # install misc
+  mkdir -p "${pkgdir}"/usr/bin "${pkgdir}"/usr/share/applications \
+    "${pkgdir}"/usr/share/icons/hicolor/{16x16,32x32,48x48}/apps
+  install -m755 "${srcdir}/eclipse.sh" "${pkgdir}/usr/bin/eclipse"
+  install -m644 "${srcdir}/eclipse.desktop" "${pkgdir}/usr/share/applications/"
+  ln -s /usr/share/eclipse/plugins/org.eclipse.sdk_${pkgver}.v${_date}/eclipse.png \
+    "${pkgdir}/usr/share/icons/hicolor/16x16/apps/eclipse.png"
+  ln -s /usr/share/eclipse/plugins/org.eclipse.sdk_${pkgver}.v${_date}/eclipse32.png \
+    "${pkgdir}/usr/share/icons/hicolor/32x32/apps/eclipse.png"
+  ln -s /usr/share/eclipse/plugins/org.eclipse.sdk_${pkgver}.v${_date}/eclipse48.png \
+    "${pkgdir}/usr/share/icons/hicolor/48x48/apps/eclipse.png"
+}

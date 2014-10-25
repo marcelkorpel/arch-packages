@@ -1,0 +1,41 @@
+# Maintainer: Marcel Korpel <marcel[dot]korpel[at]gmail>
+# Contributor: Ivan Sichmann Freitas <ivansichfreitas@gmail.com>
+# Contributor: Jaroslav Lichtblau <dragonlord@aur.archlinux.org>
+# Contributor: Jeff Mickey <jeff@archlinux.org>
+
+pkgname=ctemplate
+pkgver=2.3
+pkgrel=1
+pkgdesc="A library implementing a simple but powerful template language for C++"
+arch=('i686' 'x86_64')
+url="http://code.google.com/p/ctemplate/"
+license=('BSD')
+makedepends=('subversion' 'python')
+depends=('gcc-libs' 'perl')
+source=(svn+http://$pkgname.googlecode.com/svn/tags/$pkgname-$pkgver/
+        2to3-changes.patch
+        unicode-error.patch)
+sha256sums=('SKIP'
+            '8ed2e7dbf89aa7b13606a7a23638d27ba1964d67f7fcac0feaeb56273a391467'
+            'b6e808e60aabdf91d504d58816eaeb5a5dc3ecbbe7cf2d5dfc44e4e963374859')
+
+prepare() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  patch -p0 < "$srcdir/2to3-changes.patch"
+#  patch -p1 < "$srcdir/unicode-error.patch"
+}
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  make DESTDIR="$pkgdir" install
+  install -Dm644 COPYING "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

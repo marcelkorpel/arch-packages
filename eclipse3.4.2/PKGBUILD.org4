@@ -1,0 +1,74 @@
+# Eclipse:
+# Contributor: Andrew Wright <andreww@photism.org>
+# Contributor: Andreas W. Hauser <andy-aur@splashground.de>
+# Contributor: Paul Mattal <paul@archlinux.org>
+
+# GEF and EMF:
+# Contributor: Angel 'angvp' Velasquez <angvp[at]archlinux.com.ve>
+# Contributor: Corrado Primier <bardo@aur.archlinux.org>
+# Contributor: Rubin Simons <rubin@xs4all.nl>
+
+pkgname=eclipse-with-ve
+pkgver=3.4
+pkgrel=1
+_date=200806172000
+_emfver=2.4.3
+_emfdate=201005200038
+_gefver=3.4.2
+_gefdate=200902171642
+_vever=1.4.0
+_vedate=200807092330
+pkgdesc="An IDE for Java and other languages - Visual Editor included"
+arch=('i686' 'x86_64')
+url="http://eclipse.org"
+depends=('java-environment>=6' 'gtk2>=2.16.1' 'unzip' 'xulrunner>=1.9.0.10')
+provides=("${pkgname%%-*}=3.4.2")
+conflicts=("${pkgname%%-*}")
+install=eclipse.install
+license=("EPL/1.1")
+source=(http://archive.eclipse.org/eclipse/downloads/drops/R-${pkgver}-${_date}/eclipse-SDK-${pkgver}-linux-gtk.tar.gz
+        http://archive.eclipse.org/modeling/emf/emf/downloads/drops/${_emfver}/M${_emfdate}/emf-sdo-xsd-SDK-M${_emfdate}.zip
+        http://archive.eclipse.org/tools/gef/downloads/drops/R-${_gefver}-${_gefdate}/GEF-SDK-${_gefver}.zip
+        http://www.ehecht.com/eclipse_ve/ve_eclipse_34_${_vedate}_lin_mac.zip
+        eclipse.sh
+        eclipse.desktop
+        eclipse.ini.patch)
+noextract=(emf-sdo-xsd-SDK-M${_emfdate}.zip GEF-SDK-${_gefver}.zip)
+md5sums=('4f7183395f61f70711a1f244faf5d763'
+         'f2e6893e085a9395e390a6ae65b3a32a'
+         'a62772e3a8b6287f1a4df06f49324897'
+         'aa8a6c75f4a65884efbde35d42673780'
+         '3c67eade5888ea88813e787b586b4f1f'
+         'd88490571b49c8ebb221ed349815d040'
+         'ee66a334bc443fd23ad9bc080dc6ea69')
+if [ "$CARCH" = "x86_64" ]; then
+  source[0]="http://archive.eclipse.org/eclipse/downloads/drops/R-${pkgver}-${_date}/eclipse-SDK-${pkgver}-linux-gtk-${CARCH}.tar.gz"
+  md5sums[0]='6498216f6e6b50a203b5ab319af19dbe'
+fi
+
+prepare() {
+  cd "${srcdir}/eclipse"
+
+  # patch to increase default memory limits
+  patch -Np0 -i "${srcdir}/eclipse.ini.patch"
+}
+
+package() {
+  cd "${srcdir}/eclipse"
+
+  # install eclipse
+  install -dm755 "${pkgdir}/usr/share"
+  mv "${srcdir}/eclipse" "${pkgdir}/usr/share/"
+
+  # install misc
+  mkdir -p "${pkgdir}"/usr/bin "${pkgdir}"/usr/share/applications \
+    "${pkgdir}"/usr/share/icons/hicolor/{16x16,32x32,48x48}/apps
+  install -m755 "${srcdir}/eclipse.sh" "${pkgdir}/usr/bin/eclipse"
+  install -m644 "${srcdir}/eclipse.desktop" "${pkgdir}/usr/share/applications/"
+  ln -s /usr/share/eclipse/plugins/org.eclipse.sdk_${pkgver}.v${_date}/eclipse.png \
+    "${pkgdir}/usr/share/icons/hicolor/16x16/apps/eclipse.png"
+  ln -s /usr/share/eclipse/plugins/org.eclipse.sdk_${pkgver}.v${_date}/eclipse32.png \
+    "${pkgdir}/usr/share/icons/hicolor/32x32/apps/eclipse.png"
+  ln -s /usr/share/eclipse/plugins/org.eclipse.sdk_${pkgver}.v${_date}/eclipse48.png \
+    "${pkgdir}/usr/share/icons/hicolor/48x48/apps/eclipse.png"
+}
