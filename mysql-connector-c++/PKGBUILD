@@ -12,6 +12,7 @@ url="http://dev.mysql.com/doc/connector-cpp/en/"
 license=('GPL')
 depends=('libmysqlclient' 'boost-libs')
 makedepends=('cmake' 'boost')
+validpgpkeys=('A4A9406876FCBD3C456770C88C718D3B5072E1F5')
 source=("http://cdn.mysql.com/Downloads/Connector-C++/${pkgname}-${pkgver}.tar.gz"{,.asc}
         "mysql_cxx_linkage.patch"
         "mariadb_api.patch")
